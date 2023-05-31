@@ -1,0 +1,12 @@
+{% extends 'layout.html' %} {% block content %}
+<a href="{{ url_for('defaulthome') }}">Back</a>
+<h2>Results</h2>
+    <ul>
+      {% for user_choice in query %}
+      <li>{{ user_choice.results }}</li>
+      {% endfor %}
+    </ul>
+    {% else %}
+    <p>No results found.</p>
+    {% endif %}
+{% endblock %}
