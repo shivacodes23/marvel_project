@@ -1,61 +1,73 @@
 from datetime import datetime
-from app import db
+from app import db, login_manager
+import random
+import string
+from flask_login import UserMixin
+from werkzeug.security import check_password_hash, generate_password_hash
+import bcrypt
 
-# from flask_login import UserMixin
-# from werkzeug.security import check_password_hash, generate_password_hash
-
-
-class User(db.Model):
+class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     first_name = db.Column(db.String(50))
     last_name = db.Column(db.String(50))
     email = db.Column(db.String(100), unique=True)
     password = db.Column(db.String(255))
-    token = db.Column(db.String)
-    character = db.Relationship('Marvel', backref='user', lazy='dynamic')
+    token = db.Column(db.String(255), default=''.join(
+        random.choice(string.ascii_letters) for i in range(25)))
+    character = db.Relationship('Character', backref='user', lazy='dynamic')
     date_created = db.Column(db.DateTime, default=datetime.utcnow)
 
     def __repr__(self):
         return f'<User: {self.email}>'
 
-    # def __init__(self, **kwargs):
-    #     super().__init__(**kwargs)
-    #     self.generate_password(self.password)
+    def __init__(self, password, email, first_name, last_name):
+        self.name = first_name + " " + last_name
+        self.email = email
+        salt = bcrypt.gensalt()
+        hashed_password = bcrypt.hashpw(password.encode('utf-8'), salt)
+        self.password = hashed_password.decode('utf-8') 
 
-    # def check_password(self, password_to_check):
-    #     return check_password_hash(self.password, password_to_check)
+    def check_password(self, password):
+        return bcrypt.check_password_hash(password.encode('utf-8'), self.password.encode('utf-8'))
 
-    # def generate_password(self, password_create_salt_from):
-    #     self.password = generate_password_hash(password_create_salt_from)
-
-    # def to_dict(self):
-    #     data = {
-    #         'id': self.id,
-    #         'first_name': self.first_name,
-    #         'last_name': self.last_name,
-    #         'email': self.email
-    #     }
-    #     return data
+    def to_dict(self):
+        data = {
+            'id': self.id,
+            'first_name': self.first_name,
+            'last_name': self.last_name,
+            'email': self.email
+        }
+        return data
 
 
-class Marvel(db.Model):
+@login_manager.user_loader
+def load_user(user_id):
+    return User.query.get(user_id)
+
+
+class Character(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String)
+    name = db.Column(db.String(25))
     description = db.Column(db.Text, nullable=True)
+    super_power = db.Column(db.Text, nullable=True)
     comic_appearances = db.Column(db.Text)
+    image = db.Column(db.String(100))
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    character_id = db.Column(db.Integer)
     date_created = db.Column(db.DateTime, default=datetime.utcnow)
 
-    # def __repr__(self):
-    #     return '<Marvel: {self.name}...>'
+    def __repr__(self):
+        return '<Character: {self.name}...>'
 
-    # def to_dict(self):
-    #     data = {
-    #         'id': self.id,
-    #         'description': self.description,
-    #         'date_created': self.date_created,
-    #         'comic_apps': self.comic_appearances,
-    #         'owner': self.owner_id,
-    #         'date_created': self.date_created
-    #     }
-    #     return data
+    def to_dict(self):
+        data = {
+            'id': self.id,
+            'name': self.name,
+            'description': self.description,
+            'comics_appeared_in': self.comic_appearances,
+            'super_power': self.super_power,
+            'date_created': self.date_created,
+            'image': self.image,
+            'user_id': User.query.get(self.user_id).to_dict()
+        }
+        return data

@@ -139,4 +139,4 @@ print(f'>>>> LENGTH OF MARVEL CHARS LIST: {len(marvel_chars)}')
 #             print(error)
 
 if (__name__) == '__main__':
-    app.run()
+    app.run(debug=True)

@@ -1,0 +1,38 @@
+{% extends 'layout.html' %} {% block content %}
+<a href="{{ url_for('search') }}">Back</a>
+<hr />
+<body>
+  <form method="POST">
+    <input
+      type="text"
+      name="query"
+      placeholder="Search for a Marvel character"
+    />
+    <button type="submit">Search</button>
+  </form>
+</body>
+<hr />
+{% if character.data %}
+<div style="text-align: center">
+  <img
+    src="{{ character.data.results[0].thumbnail.get('path')+'.jpg' }}"
+    alt="Marvel Character"
+  />
+</div>
+<div class="char_info" style="text-align: center">
+  <ul>
+    {{ character.data.results[0]['name'] }}
+  </ul>
+  <ul>
+    {{ character.data.results[0]['id'] }}
+  </ul>
+  <ul>
+    {{ character.data.results[0]['description'] }}
+  </ul>
+  <ul>
+    {% for comic in comic_list %}
+    <strong><i>&nbsp;{{ comic }}&nbsp;</i></strong>
+    {% endfor %}
+  </ul>
+</div>
+{% endif %} {% endblock %}

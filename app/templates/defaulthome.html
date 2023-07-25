@@ -1,9 +1,12 @@
 {% extends 'layout.html' %} {% block content %}
-<h1>Marvel Superheroes</h1>
+<h1>Welcome to the Marvel Superheroes database.</h1>
 {% for char in chars %}
+<div style="text-align: center">
+  <img src="{{ char.thumbnail }}" alt="char_img" />
+</div>
 <h3><u>{{ char.name.title() }}</u></h3>
 <h2>{{ char.id }}</h2>
 <h2>{{ char.description }}</h2>
 <h2>{{ char.comics }}</h2>
-<img src="{{ char.thumbnail }}" class="w3-circle" alt="char_img" />
+
 {% endfor %} {% endblock %}

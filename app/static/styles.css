@@ -24,4 +24,10 @@ footer .row{
 img{
 max-width: 25%;
 height: 25%;
+justify-content: center;
+padding: 10px 0px 10px 0px;
+}
+
+.char_info{
+    padding: 10px 0px 10px 0px;
 }
