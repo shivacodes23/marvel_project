@@ -3,8 +3,9 @@ from app import db, login_manager
 import random
 import string
 from flask_login import UserMixin
-from werkzeug.security import check_password_hash, generate_password_hash
+import typing
 import bcrypt
+
 
 class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
@@ -20,15 +21,14 @@ class User(db.Model, UserMixin):
     def __repr__(self):
         return f'<User: {self.email}>'
 
-    def __init__(self, password, email, first_name, last_name):
-        self.name = first_name + " " + last_name
-        self.email = email
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
         salt = bcrypt.gensalt()
-        hashed_password = bcrypt.hashpw(password.encode('utf-8'), salt)
-        self.password = hashed_password.decode('utf-8') 
+        hashed_password = bcrypt.hashpw(self.password.encode('utf-8'), salt)
+        self.password = hashed_password.decode('utf-8')
 
-    def check_password(self, password):
-        return bcrypt.check_password_hash(password.encode('utf-8'), self.password.encode('utf-8'))
+    def check_password(self, password) -> bool:
+        return bcrypt.checkpw(password.encode('utf-8'), self.password.encode('utf-8'))
 
     def to_dict(self):
         data = {
@@ -50,7 +50,7 @@ class Character(db.Model):
     name = db.Column(db.String(25))
     description = db.Column(db.Text, nullable=True)
     super_power = db.Column(db.Text, nullable=True)
-    comic_appearances = db.Column(db.Text)
+    comic_appearances = db.Column(db.Text, nullable=True)
     image = db.Column(db.String(100))
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     character_id = db.Column(db.Integer)
@@ -63,6 +63,7 @@ class Character(db.Model):
         data = {
             'id': self.id,
             'name': self.name,
+            'character_id': self.character_id,
             'description': self.description,
             'comics_appeared_in': self.comic_appearances,
             'super_power': self.super_power,

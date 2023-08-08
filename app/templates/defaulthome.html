@@ -1,5 +1,9 @@
 {% extends 'layout.html' %} {% block content %}
+<div class="home_text">
 <h1>Welcome to the Marvel Superheroes database.</h1>
+<h2>Search for the character of your choice.</h2>
+<h3>Login or register to save a character to your list.</h3>
+</div>
 {% for char in chars %}
 <div style="text-align: center">
   <img src="{{ char.thumbnail }}" alt="char_img" />

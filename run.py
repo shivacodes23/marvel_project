@@ -24,7 +24,6 @@ from app import app
 # user_choice = input(
 #     'Enter the Marvel Superhero you would like to view information for.').lower()
 
-
 # api_link = f"http://gateway.marvel.com/v1/public/characters?name={user_choice}&ts=123&apikey={apikey}&hash={(hashlib.md5(hash.encode())).hexdigest()}"
 # print(f"API_KEY: {apikey}")
 # print(f"PRIVATE_KEY: {pvapikey}")
