@@ -2,10 +2,21 @@
 <a href="{{ url_for('homepage') }}">Back</a>
 <hr/>
 <body>
-  <form method="POST">
-    <input type="text" name="query" placeholder="Browse Marvel characters" />
-    <button type="submit">Search</button>
-  </form>
+  <div class="form-container">
+      <form method="POST">
+        <input type="text" name="query" placeholder="Browse Marvel characters" />
+        <div>
+          <button type="submit">Search</button>
+          <!-- <a href="{{ url_for('savelist') }}" class="btn-sm btn-info save_button" id=save_btn role="button" type="submit" >Save Character</a> -->
+        </div>
+    </form>
+  </div>  
+  <div>
+    <form method="POST">
+      <input type="text" name="query" placeholder="Enter character name you want to save">
+      <a href="{{ url_for('savelist') }}" class="btn-sm btn-outline-primary save_button" type="submit" >Save Character</a>
+    </form>
+  </div>
 </body>
 <hr/>
 {% if character.data %}

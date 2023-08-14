@@ -1,13 +1,37 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Save List</title>
+<title>SaveList</title>
 </head>
+
 <body>
-  <div>
-    <a href="{ url_for('savelist')}" button class="btn btn-primary save_button" role="button" type="submit">Save Character</a>
-  </div>
+<h2>Your saved characters list.</h2>
+
 </body>
+{% block content %}
+{% if character.data %}
+<div style="text-align: center">
+  <img
+    src="{{ character.data.results[0].thumbnail.get('path')+'.jpg' }}"
+    alt="Marvel Character"
+  />
+</div>
+<div class="char_info" style="text-align: center">
+  <ul>
+    {{ character.data.results[0]['name'] }}
+  </ul>
+  <ul>
+    {{ character.data.results[0]['id'] }}
+  </ul>
+  <ul>
+    {{ character.data.results[0]['description'] }}
+  </ul>
+  <ul>
+    {% for comic in comic_list %}
+    <strong><i>&nbsp;{{ comic }}&nbsp;</i></strong>
+    {% endfor %}
+  </ul>
+</div>
+{% endif %}
+{% endblock %}
 </html>

@@ -39,3 +39,15 @@ padding: 10px 0px 10px 0px;
 .home_text{
     text-align: center;
 }
+
+.form-container {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+.button-container {
+            margin-top: 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }

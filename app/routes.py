@@ -139,27 +139,27 @@ def blog_single():
             character_data = requests.get(
                 f"http://gateway.marvel.com/v1/public/characters?name={user_choice}&ts=123&apikey=fa8ab8be073cf4796a0884496945a04f&hash={(hashlib.md5(hash.encode())).hexdigest()}")
             context['character'] = character_data.json()
-            print(f"CONTEXT DATA: {context['character']}")
-            # char_data = character_data.get('results')[0]
+            #print(f"CONTEXT DATA: {context['character']}")
         except:
             print(
                 "Either the character cannot be found or worse...you're looking for a DC character :(", 'danger')
             return redirect(request.referrer)
-        print(f"CONTEXT: {context}")
+        # print(f"CONTEXT: {context}")
         comics = context['character']['data']['results'][0]['comics']['items']
-        print(comics)
+        # print(comics)
         comics_list = []
         for comic in comics:
             comics_list.append(comic['name'])
             context['comic_list'] = comics_list
-        print(comics_list)
+        # print(comics_list)
+        # print(context)
     return render_template('single.html', **context)
 
 
-@app.route('/save', methods=['GET','POST'])
+@app.route('/save', methods=['GET', 'POST'])
 def savelist():
     context = {'character': ""}
-    if request.method == 'POST':
+    if request.method == 'POST' and not current_user.is_anonymous:
         user_choice = request.form.get('query').lower()
         character_data = requests.get(
             f"http://gateway.marvel.com/v1/public/characters?name={user_choice}&ts=123&apikey=fa8ab8be073cf4796a0884496945a04f&hash={(hashlib.md5(hash.encode())).hexdigest()}")
@@ -169,18 +169,24 @@ def savelist():
         for comic in comics:
             comics_list.append(comic['name'])
             context['comic_list'] = comics_list
-        print(context)    
-        name = request.form.get('name')
-        character_id = request.form.get('character_id')
-        description = request.form.get('description')
-        comics_appeared_in = request.form.get('comic_appearances')
-        super_power = request.form.get('super_power')
-        image = request.form.get('image')
-        character = Character(name=name,character_id=character_id,description=description,comics_appeared_in=comics_appeared_in,super_power=super_power,image=image)
+        # print(context)
+        name = context['character']['data']['results'][0]['name']
+        print(name)
+        character_id = context['character']['data']['results'][0]['id']
+        description = context['character']['data']['results'][0]['description']
+        comics_appeared_in = context['comic_list']
+        super_power = context['character']['data']['results'][0]['']
+        image = context['character']['data']['results'][0]['thumbnail'].get(
+            'path')+'.jpg'
+        character = Character(name=name,character_id=character_id,description=description,comics_appeared_in=comics_appeared_in,super_power=super_power,image=image, user_id=current_user.id)
         db.session.add(character)
         db.session.commit()
-        user_list = user_list.append(context)
-        return render_template('userlist.html',**context)
+        # context = {
+        #     'character': Character.query.order_by(Character.date_created.desc()).all()
+        # }
+    return render_template('userlist.html',**context)
+    # return redirect(request.referrer)
+
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
@@ -224,4 +230,3 @@ def logout():
     logout_user()
     flash('User logged out successfully', 'danger')
     return redirect(url_for('homepage'))
-
