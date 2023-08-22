@@ -3,7 +3,7 @@ from app import db, login_manager
 import random
 import string
 from flask_login import UserMixin
-import typing
+# import typing
 import bcrypt
 
 
@@ -57,9 +57,10 @@ class Character(db.Model):
     date_created = db.Column(db.DateTime, default=datetime.utcnow)
 
     def __repr__(self):
-        return '<Character: {self.name}...>'
+        return f'<Character: {self.name}, Owner: {self.user_id}>'
 
     def to_dict(self):
+        from app.models import User
         data = {
             'id': self.id,
             'name': self.name,

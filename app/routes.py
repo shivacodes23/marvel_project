@@ -139,7 +139,7 @@ def blog_single():
             character_data = requests.get(
                 f"http://gateway.marvel.com/v1/public/characters?name={user_choice}&ts=123&apikey=fa8ab8be073cf4796a0884496945a04f&hash={(hashlib.md5(hash.encode())).hexdigest()}")
             context['character'] = character_data.json()
-            #print(f"CONTEXT DATA: {context['character']}")
+            # print(f"CONTEXT DATA: {context['character']}")
         except:
             print(
                 "Either the character cannot be found or worse...you're looking for a DC character :(", 'danger')
@@ -178,13 +178,17 @@ def savelist():
         super_power = context['character']['data']['results'][0]['']
         image = context['character']['data']['results'][0]['thumbnail'].get(
             'path')+'.jpg'
-        character = Character(name=name,character_id=character_id,description=description,comics_appeared_in=comics_appeared_in,super_power=super_power,image=image, user_id=current_user.id)
+        character = Character(name=name, character_id=character_id, description=description,
+                              comics_appeared_in=comics_appeared_in, super_power=super_power, image=image, user_id=current_user.id)
         db.session.add(character)
         db.session.commit()
-        # context = {
-        #     'character': Character.query.order_by(Character.date_created.desc()).all()
-        # }
-    return render_template('userlist.html',**context)
+        context = {
+            'character': Character.query.order_by(Character.date_created.desc()).all()
+        }
+    else:
+        return redirect(request.referrer)
+
+    return render_template('single.html', **context)
     # return redirect(request.referrer)
 
 
